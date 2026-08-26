@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula Virtual | Escáner Estacionario Leica RTC360 & Cyclone 3DR - GeomaTEK Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles_acre.css">
+</head>
+<body class="lms-body">
+
+  <!-- Header Superior LMS (Fiel a la captura) -->
+  <header class="lms-header">
+    <div class="lms-header-left">
+      <a href="curso-leica-escaner.html" class="btn-back-portal">
+        <span class="back-arrow">&lsaquo;</span> Ir al Portal de Estudiante
+      </a>
+    </div>
+    <div class="lms-header-center">
+      <div class="lms-brand">
+        <span class="lms-logo-icon">🌐</span>
+        <span class="lms-logo-text">Geoma<strong>TEK</strong> <span class="training-tag">Training</span></span>
+      </div>
+    </div>
+    <div class="lms-header-right">
+      <div class="user-pill" id="user-display-pill" onclick="openLoginModal()">
+        <span class="user-avatar-icon">👤</span>
+        <span id="user-name-display">Estudiante Invitado</span>
+      </div>
+      <button class="btn-lms-icon" title="Foro de Discusión" onclick="toggleDiscussion()">
+        💬 <span class="badge-count">1 Discusión</span>
+      </button>
+      <button class="btn-lms-icon" title="Pantalla Completa" onclick="toggleFullScreen()">
+        ⛶
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal: Sidebar Izquierda + Área de Contenido Principal -->
+  <div class="lms-container">
+    
+    <!-- Sidebar Izquierda: Árbol de Lecciones y Progreso -->
+    <aside class="lms-sidebar">
+      
+      <!-- Encabezado del Curso -->
+      <div class="sidebar-course-header">
+        <h2 class="sidebar-course-title">Escáner Estacionario Leica RTC360 & Cyclone 3DR</h2>
+        <span class="sidebar-course-type">Curso Profesional Online</span>
+        
+        <!-- Barra de Progreso -->
+        <div class="progress-box">
+          <div class="progress-meta">
+            <span id="progress-percentage-text">0% completado</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Botón Reciba su Certificado -->
+        <button class="btn-certificate-locked" id="btn-get-certificate" disabled onclick="openCertificateModal()">
+          🎓 ¡RECIBA SU CERTIFICADO!
+        </button>
+        <span class="cert-note" id="cert-note">Completa el 100% para desbloquear</span>
+      </div>
+
+      <!-- Buscador de Lecciones -->
+      <div class="sidebar-search-box">
+        <input type="text" id="lesson-search-input" placeholder="Buscar por el título de la lección..." oninput="filterLessons()">
+      </div>
+
+      <!-- Lista de Módulos y Lecciones (Acordeón) -->
+      <div class="lessons-tree" id="lessons-tree-container">
+        <!-- Renderizado dinámico con JS -->
+      </div>
+    </aside>
+
+    <!-- Área Principal de Reproducción y Visualización -->
+    <main class="lms-main-content">
+      
+      <!-- Barra Superior de la Lección Activa -->
+      <div class="active-lesson-bar">
+        <h3 id="current-lesson-title">Cargando lección...</h3>
+        <div class="lesson-bar-actions">
+          <span class="lesson-type-tag" id="current-lesson-type-badge">VIDEO</span>
+        </div>
+      </div>
+
+      <!-- Visor de Contenido (YouTube Video / Calaméo Slides / Lecturas PDF) -->
+      <div class="viewer-viewport" id="viewer-viewport">
+        <!-- Contenedor dinámico según el tipo de lección -->
+        <div class="viewer-container" id="dynamic-viewer-container">
+          <!-- Inyectado con JS -->
+        </div>
+      </div>
+
+      <!-- Barra Inferior de Navegación y Completado -->
+      <footer class="lms-bottom-bar">
+        <div class="lesson-status-info">
+          <span class="status-indicator-badge" id="lesson-status-badge">NOTA: EN PROGRESO</span>
+        </div>
+        <div class="nav-controls-group">
+          <button class="btn-lms-prev" id="btn-prev-lesson" onclick="goToPrevLesson()">&larr; ANTERIOR</button>
+          <button class="btn-lms-complete" id="btn-complete-lesson" onclick="markCurrentLessonComplete()">MARCAR COMO COMPLETADA ✔</button>
+          <button class="btn-lms-next" id="btn-next-lesson" onclick="goToNextLesson()">CONTINUAR &rarr;</button>
+        </div>
+      </footer>
+    </main>
+
+  </div>
+
+  <!-- Modal de Inicio de Sesión / Autenticación de Estudiante -->
+  <div id="login-modal" class="lms-modal">
+    <div class="lms-modal-dialog">
+      <button class="lms-modal-close" onclick="closeLoginModal()">&times;</button>
+      <div class="login-header">
+        <span class="login-badge">PORTAL DE ESTUDIANTES</span>
+        <h3>Acceso al Aula Virtual</h3>
+        <p>Ingresa con tu correo y nombre para registrar y guardar tu avance de forma continua.</p>
+      </div>
+      <form id="login-form" class="lms-form" onsubmit="handleStudentLogin(event)">
+        <div class="form-group">
+          <label>Nombres y Apellidos *</label>
+          <input type="text" id="login-name" required placeholder="Ej. Luis Raúl Osorio Muñoz">
+        </div>
+        <div class="form-group">
+          <label>Correo Electrónico *</label>
+          <input type="email" id="login-email" required placeholder="estudiante@empresa.com">
+        </div>
+        <div class="form-group">
+          <label>Código de Matrícula / DNI (Opcional)</label>
+          <input type="text" id="login-code" placeholder="GEO-2026-XXXX">
+        </div>
+        <button type="submit" class="btn-login-submit">Ingresar al Curso</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Certificado de Aprobación -->
+  <div id="certificate-modal" class="lms-modal">
+    <div class="lms-modal-dialog certificate-dialog">
+      <button class="lms-modal-close" onclick="closeCertificateModal()">&times;</button>
+      <div class="cert-inner-card" id="printable-certificate">
+        <div class="cert-border">
+          <div class="cert-header">
+            <span class="cert-inst">GeomaTEK | Formación avanzada en Geomática</span>
+            <h2>CERTIFICADO DE APROBACIÓN</h2>
+            <p>Se otorga la presente distinción a:</p>
+          </div>
+          <h1 class="cert-student-name" id="cert-student-name">Luis Raúl Osorio Muñoz</h1>
+          <p class="cert-body-text">
+            Por haber completado y aprobado satisfactoriamente con el 100% de cumplimiento el programa de especialización técnica:
+          </p>
+          <h3 class="cert-course-name">Levantamiento de Alta Precisión con Escáner Estacionario Leica RTC360 & Cyclone 3DR</h3>
+          <div class="cert-footer-grid">
+            <div>
+              <span class="cert-date">Fecha: 25 de Agosto de 2026</span>
+              <span class="cert-hours">Duración: 32 Horas Académicas</span>
+            </div>
+            <div class="cert-signatures">
+              <div class="sign-line">
+                <strong>Arq. Luis R. Osorio Muñoz</strong>
+                <span>Instructor Certificado en Geomática</span>
+              </div>
+            </div>
+          </div>
+          <div class="cert-qr-box">
+            <span>Validación Digital: <strong>GEOMATEK-CERT-LEICA-2026</strong></span>
+          </div>
+        </div>
+      </div>
+      <div class="cert-actions">
+        <button class="btn-print-cert" onclick="window.print()">🖨️ Imprimir / Guardar en PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Foro / Discusión -->
+  <div id="discussion-modal" class="lms-modal">
+    <div class="lms-modal-dialog">
+      <button class="lms-modal-close" onclick="toggleDiscussion()">&times;</button>
+      <h3>Foro de Consultas Técnicas</h3>
+      <p class="disc-sub">Haz tus preguntas sobre este módulo y el instructor responderá directamente.</p>
+      
+      <div class="discussion-thread">
+        <div class="comment-box">
+          <div class="comment-author">
+            <strong>Ing. Marco Salcedo</strong> <span>• Hace 2 días</span>
+          </div>
+          <p>¿Cuál es la distancia recomendada entre el escáner RTC360 y las dianas B&W para garantizar precisión milimétrica en el ajuste?</p>
+          <div class="comment-reply">
+            <strong>Arq. Luis R. Osorio (Instructor):</strong> Para el sensor RTC360 se recomienda ubicar las dianas B&W entre 5 a 20 metros con ángulo de incidencia menor a 45° para optimizar el baricentro de puntería.
+          </div>
+        </div>
+      </div>
+
+      <form class="new-comment-form" onsubmit="event.preventDefault(); alert('Pregunta enviada al instructor.');">
+        <textarea placeholder="Escribe tu consulta sobre la lección..." rows="3" required></textarea>
+        <button type="submit" class="btn-submit" style="margin-top: 0.5rem;">Publicar Pregunta</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+
+</body>
+</html>
